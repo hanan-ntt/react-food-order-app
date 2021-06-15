@@ -6,38 +6,58 @@ const cartInitialState = {
   dispatch: 'reset',
 };
 const cartReducer = (state, action) => {
-  const { type, value } = action;
-  if (type === 'ADD') {
-    if (state.items.length > 0) {
-      state.items.map((item) =>
-        item.id === value.id && item.amount <= 5
-          ? (item.amount += value.amount)
-          : item.amount
-      );
-      return;
-    }
-    const updatedItems = state.items.concat(value);
-    console.log(updatedItems);
-    return {
-      items: updatedItems,
-    };
+  const { type, item } = action;
+  switch (type) {
+    case 'ADD':
+      if (state.items.length > 0) {
+        const existingItemIndex = state.items.findIndex(
+          (cartItem) => cartItem.id === item.id
+        );
+        const existingItem = state.items[existingItemIndex];
+        let updatedItem;
+        let updatedItems;
+        if (existingItem) {
+          updatedItem = {
+            ...existingItem,
+            amount: existingItem.amount + item.amount,
+          };
+          updatedItems = [...state.items];
+          updatedItems[existingItemIndex] = updatedItem;
+        } else {
+          updatedItems = state.items.concat(item);
+        }
+        const updatedTotalAmount = state.totalAmount + item.price * item.amount;
+        return {
+          items: updatedItems,
+          totalAmount: updatedTotalAmount,
+        };
+      }
+      if (state.items.length === 0) {
+        const updatedItems = state.items.concat(item);
+        const updatedTotalAmount = state.totalAmount + item.price * item.amount;
+        return {
+          items: updatedItems,
+          totalAmount: updatedTotalAmount,
+        };
+      }
+      break;
+    default:
+      return state;
   }
-  // switch (type) {
-  //   case 'ADD':
-  //     const updatedItems = state.items.concat(value);
-  //     console.log(updatedItems);
-  //     return {
-  //       items: updatedItems,
-  //     };
-  //   default:
-  //     return state;
-  // }
 };
 const CartProvider = (props) => {
   const [cartState, dispatch] = useReducer(cartReducer, cartInitialState);
+  const addItemHandler = (item) => {
+    dispatch({ type: 'ADD', item: item });
+  };
+  const removeItemHandler = () => {};
   return (
     <CartContext.Provider
-      value={{ cartContext: cartState, cartAction: dispatch }}
+      value={{
+        cartContext: cartState,
+        addItem: addItemHandler,
+        removeItem: removeItemHandler,
+      }}
     >
       {props.children}
     </CartContext.Provider>

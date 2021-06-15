@@ -6,7 +6,7 @@ import classes from './MealItemForm.module.css';
 const MealItemForm = (props) => {
   const { mealDetails } = props;
   const mealItemRef = useRef();
-  const { cartAction } = useContext(CartContext);
+  const { addItem } = useContext(CartContext);
   let mealWithQuantity;
   const handleMealItemSubmission = (e) => {
     e.preventDefault();
@@ -16,7 +16,7 @@ const MealItemForm = (props) => {
         amount: +mealItemRef.current.value,
       };
     }
-    cartAction({ type: 'ADD', value: mealWithQuantity });
+    addItem(mealWithQuantity);
   };
   return (
     <form className={classes.form} onSubmit={handleMealItemSubmission}>
