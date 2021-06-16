@@ -5,11 +5,15 @@ import classes from './CartItem.module.css';
 const CartItem = (props) => {
   const { item } = props;
   const { name, price: itemPrice, amount } = item;
-  const { addItem } = useContext(CartContext);
+  const { addItem, removeItem } = useContext(CartContext);
   const price = `£${itemPrice.toFixed(2)}`;
   const plusClickHandler = () => {
     const updatedItem = { ...item, amount: 1 };
     addItem(updatedItem);
+  };
+  const minusClickHandler = () => {
+    const updatedItem = { ...item, amount: 1 };
+    removeItem(updatedItem);
   };
   return (
     <li className={classes['cart-item']}>
@@ -21,7 +25,7 @@ const CartItem = (props) => {
         </div>
       </div>
       <div className={classes.actions}>
-        <button onClick={console.log('remove ITTTT')}>−</button>
+        <button onClick={minusClickHandler}>−</button>
         <button onClick={plusClickHandler}>+</button>
       </div>
     </li>
